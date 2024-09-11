@@ -55,6 +55,7 @@ namespace socketcan_bridge
       can_topic_ = nh->advertise<can_msgs::Frame>("received_messages",
                                                   nh_param->param("received_messages_queue_size", 10));
       driver_ = driver;
+      timer_ = nh->createTimer(ros::Duration(0.1), &SocketCANToTopic::timerCallback, this);
     };
 
   void SocketCANToTopic::setup()
@@ -85,6 +86,14 @@ namespace socketcan_bridge
        if (nh.getParam("can_ids", filters)) return setup(filters);
        return setup();
   }
+
+  void SocketCANToTopic::timerCallback(const ros::TimerEvent& e)
+  {
+    if(!driver_->getState().isReady())
+    {
+      driver_->recover();
+    }
+  };
 
 
   void SocketCANToTopic::frameCallback(const can::Frame& f)

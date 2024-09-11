@@ -50,10 +50,12 @@ class SocketCANToTopic
 
     can::FrameListenerConstSharedPtr frame_listener_;
     can::StateListenerConstSharedPtr state_listener_;
+    ros::Timer timer_;
 
 
     void frameCallback(const can::Frame& f);
     void stateCallback(const can::State & s);
+    void timerCallback(const ros::TimerEvent& e);
 };
 
 void convertSocketCANToMessage(const can::Frame& f, can_msgs::Frame& m)
